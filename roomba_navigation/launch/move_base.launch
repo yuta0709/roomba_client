@@ -1,0 +1,31 @@
+<launch>
+    <arg name="no_static_map" default="true" />
+    <arg name="move_base_simple_goal" default="/move_base_simple/goal" />
+    <arg name="cmd_vel_topic" default="/cmd_vel" />
+    <arg name="odom_topic" default="/odom" />
+    <arg name="global_planner_type" default="navfn/NavfnROS" />
+    <arg name="local_planner_type" default="dwa_local_planner/DWAPlannerROS" />
+
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+
+        <rosparam file="$(find roomba_navigation)/param/move_base_params.yaml" command="load" />
+
+        <rosparam file="$(find roomba_navigation)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find roomba_navigation)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find roomba_navigation)/param/costmap_local_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find roomba_navigation)/param/costmap_global_withoutmap_params.yaml" command="load" ns="global_costmap" if="$(arg no_static_map)" />
+        <rosparam file="$(find roomba_navigation)/param/costmap_global_withmap_params.yaml" command="load" ns="global_costmap" unless="$(arg no_static_map)" />
+
+        <param name="base_global_planner" value="$(arg global_planner_type)" />
+        <rosparam file="$(find roomba_navigation)/param/global_planner/navfn_params.yaml" command="load" />
+
+        <param name="base_local_planner" value="$(arg local_planner_type)" />
+        <rosparam file="$(find roomba_navigation)/param/local_planner/dwa_local_planner_params.yaml" command="load" />
+
+        <remap from="move_base_simple/goal" to="$(arg move_base_simple_goal)" />
+        <remap from="cmd_vel" to="$(arg cmd_vel_topic)" />
+        <remap from="odom" to="$(arg odom_topic)" />
+
+    </node>
+
+</launch>

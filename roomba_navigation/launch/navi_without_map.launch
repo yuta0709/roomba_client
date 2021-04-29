@@ -1,0 +1,5 @@
+<launch>
+    <include file="$(find roomba_slam)/launch/gmapping.launch" />
+    <include file="$(find roomba_navigation)/launch/move_base.launch" />
+    <include file="$(find roomba_navigation)/launch/gui.launch" />
+</launch>
